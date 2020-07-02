@@ -459,6 +459,46 @@ def build_response_message(object_spec, response_message, namespace):
 
         if policy_obj["reasons"]:
 
+            # Check if the policy is toggled off for the target namespace
+            if k8s_ns_policy_toggle_enabled:
+                 
+                try:
+
+                    opa_response = requests.post(
+                        opa_base_url + "/v1/data/kubernetes/namespaces/" + namespace,
+                        json=object_spec,
+                        headers={"Content-Type": "application/json"},
+                        timeout=5,
+                    )
+
+                except requests.exceptions.RequestException as exception:
+
+                    app.logger.info(f"Namespace lookup call to OPA was unsuccessful")
+
+                    print(f"Exception:\n{exception}")
+
+                    response_message = "[FAIL] HIGH - Namespace lookup call to OPA was unsuccessful. Please contact your cluster administrator"
+
+                    return response_message
+
+                if opa_response and opa_response.status_code == 200:
+
+                    app.logger.info("Namespace lookup call to OPA was successful")
+                    app.logger.debug(f"OPA Response Headers: {opa_response.headers}")
+                    app.logger.debug(f"OPA Response Text:\n{opa_response.text}")
+
+                else:
+
+                    app.logger.info(
+                        f"Request to OPA returned an error {opa_response.status_code}, the response is:\n{opa_response.text}"
+                    )
+
+                    response_message = "[FAIL] HIGH - Namespace lookup call to OPA was unsuccessful. Please contact your cluster administrator"
+
+                    return response_message 
+                
+                # Current work - Add logic to check for policy specific toggle label on namespace, act accordingly
+
             for reason in policy_obj["reasons"]:
 
                 app.logger.debug(f"Policy Failed")
