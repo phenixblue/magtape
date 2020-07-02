@@ -408,7 +408,7 @@ def build_response_message(object_spec, response_message, namespace):
     if opa_response and opa_response.status_code == 200:
 
         app.logger.info("Call to OPA was successful")
-        app.logger.debug(f"Opa Response Headers: {opa_response.headers}")
+        app.logger.debug(f"OPA Response Headers: {opa_response.headers}")
         app.logger.debug(f"OPA Response Text:\n{opa_response.text}")
 
     else:
