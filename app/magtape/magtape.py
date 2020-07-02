@@ -63,8 +63,10 @@ slack_webhook_annotation = os.environ["MAGTAPE_SLACK_ANNOTATION"]
 slack_user = os.environ["MAGTAPE_SLACK_USER"]
 slack_icon = os.environ["MAGTAPE_SLACK_ICON"]
 
-# Set K8s Events specific variables
+# Set K8s specific variables
 k8s_events_enabled = os.environ["MAGTAPE_K8S_EVENTS_ENABLED"]
+k8s_ns_policy_toggle_enabled = os.getenv("MAGTAPE_NS_POLICY_TOGGLE_ENABLED", "FALSE")
+k8s_ns_policy_toggle_label_base = os.getenv("MAGTAPE_NS_POLICY_TOGGLE_LABEL_BASE", "k8s.t-mobile.com/magtape-disable-")
 
 # Set OPA Info
 opa_base_url = os.environ["OPA_BASE_URL"]

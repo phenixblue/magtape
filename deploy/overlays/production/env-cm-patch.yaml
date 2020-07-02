@@ -12,3 +12,5 @@ data:
   MAGTAPE_SLACK_ENABLED: "TRUE"
   # Enable Passive Alerts
   MAGTAPE_SLACK_PASSIVE: "TRUE"
+  # Enable Namespace Policy Toggle
+  MAGTAPE_NS_POLICY_TOGGLE_ENABLED: "TRUE"
