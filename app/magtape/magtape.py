@@ -58,7 +58,8 @@ magtape_pod_name = os.environ["MAGTAPE_POD_NAME"]
 slack_enabled = os.environ["MAGTAPE_SLACK_ENABLED"]
 slack_passive = os.environ["MAGTAPE_SLACK_PASSIVE"]
 slack_webhook_url_default = os.environ["MAGTAPE_SLACK_WEBHOOK_URL_DEFAULT"]
-slack_webhook_annotation = os.environ["MAGTAPE_SLACK_ANNOTATION"]
+slack_webhook_secret = "magtape-slack"
+slack_webhook_secret_key = "webhook-url"
 slack_user = os.environ["MAGTAPE_SLACK_USER"]
 slack_icon = os.environ["MAGTAPE_SLACK_ICON"]
 
@@ -301,7 +302,7 @@ def magtape(request_spec):
             alert_targets.append(slack_webhook_url_default)
 
             # Check Request namespace for custom Slack Webhook
-            get_namespace_annotation(namespace, slack_webhook_annotation, alert_targets)
+            get_namespace_slack(namespace, slack_webhook_secret, alert_targets)
 
             # Set boolean to show whether a customer alert was sent
             if len(alert_targets) > 1:
@@ -497,11 +498,9 @@ def build_response_message(object_spec, response_message, namespace):
 ################################################################################
 
 
-def get_namespace_annotation(
-    request_namespace, slack_webhook_annotation, alert_targets
-):
+def get_namespace_slack(request_namespace, slack_webhook_secret, alert_targets):
 
-    """Function to check for customer defined Slack Incoming Webhook URL in namespace annotation"""
+    """Function to check for customer defined Slack Incoming Webhook URL in namespaced secret"""
 
     config.load_incluster_config()
 
@@ -509,39 +508,35 @@ def get_namespace_annotation(
 
     try:
 
-        request_ns_annotations = v1.read_namespace(
-            request_namespace
-        ).metadata.annotations
+        request_ns_secrets = v1.list_namespaced_secret(request_namespace)
 
-        app.logger.debug(f"Request Namespace Annotations: {request_ns_annotations}")
+        app.logger.debug(f"Request Namespace Secrets: {request_ns_secrets}")
 
     except ApiException as exception:
 
+        app.logger.info(f"Unable to query secrets in request namespace: {exception}\n")
+
+    app.logger.info(f"Request Secrets: {request_ns_secrets}")
+
+    slack_webhook_url_customer = "".join(
+        [
+            base64.b64decode(secret.data[slack_webhook_secret_key]).decode()
+            for secret in request_ns_secrets.items
+            if secret.metadata.name == slack_webhook_secret
+        ]
+    )
+
+    if slack_webhook_url_customer:
+
         app.logger.info(
-            f"Unable to query K8s namespace for Slack Webhook URL annotation: {exception}\n"
+            f'Slack Webhook Secret Detected for namespace "{request_namespace}"'
         )
 
-    if request_ns_annotations and slack_webhook_annotation in request_ns_annotations:
+        alert_targets.append(slack_webhook_url_customer)
 
-        slack_webhook_url_customer = request_ns_annotations[slack_webhook_annotation]
+    else:
 
-        if slack_webhook_url_customer:
-
-            app.logger.info(
-                f'Slack Webhook Annotation Detected for namespace "{request_namespace}"'
-            )
-            app.logger.debug(
-                f"Slack Webhook Annotation Value: {slack_webhook_url_customer}"
-            )
-
-            alert_targets.append(slack_webhook_url_customer)
-
-        else:
-
-            app.logger.info(
-                f"No Slack Incoming Webhook URL Annotation Detected, using default"
-            )
-            app.logger.debug(f"Default Slack Webhook URL: {slack_webhook_url_default}")
+        app.logger.info(f"No Slack Incoming Webhook URL Secret Detected, using default")
 
 
 ################################################################################
@@ -720,14 +715,7 @@ def main():
     app.logger.info("MagTape Startup")
 
     app.run(
-        host="0.0.0.0",
-        port=5000,
-        debug=False,
-        threaded=True,
-        ssl_context=(
-            f"{config.magtape_tls_path}/cert.pem",
-            f"{config.magtape_tls_path}/key.pem",
-        ),
+        host="0.0.0.0", port=5000, debug=False, threaded=True,
     )
 
 
