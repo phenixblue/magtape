@@ -516,8 +516,6 @@ def get_namespace_slack(request_namespace, slack_webhook_secret, alert_targets):
 
         app.logger.info(f"Unable to query secrets in request namespace: {exception}\n")
 
-    app.logger.info(f"Request Secrets: {request_ns_secrets}")
-
     slack_webhook_url_customer = "".join(
         [
             base64.b64decode(secret.data[slack_webhook_secret_key]).decode()
