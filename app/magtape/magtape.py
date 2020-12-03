@@ -41,7 +41,7 @@ app = Flask(__name__)
 metrics = PrometheusMetrics(app, defaults_prefix="magtape")
 
 # Static information as metric
-metrics.info("app_info", "Application info", version="0.6")
+metrics.info("app_info", "Application info", version="v2.2.0")
 
 # Set logging config
 log = logging.getLogger("werkzeug")
@@ -502,7 +502,13 @@ def get_namespace_slack(request_namespace, slack_webhook_secret, alert_targets):
 
     """Function to check for customer defined Slack Incoming Webhook URL in namespaced secret"""
 
-    config.load_incluster_config()
+    try:
+        config.load_incluster_config()
+    except config.ConfigException:
+        try:
+            config.load_kube_config()
+        except config.ConfigException:
+            raise Exception("Could not configure kubernetes python client")
 
     v1 = client.CoreV1Api()
 
@@ -549,7 +555,13 @@ def send_k8s_event(
     """Function to create a k8s event in the target namespace upon policy failure"""
 
     # Load k8s client config
-    config.load_incluster_config()
+    try:
+        config.load_incluster_config()
+    except config.ConfigException:
+        try:
+            config.load_kube_config()
+        except config.ConfigException:
+            raise Exception("Could not configure kubernetes python client")
 
     # Create an instance of the API class
     api_instance = client.CoreV1Api()
@@ -584,7 +596,7 @@ def send_k8s_event(
 
     try:
 
-        api_response = api_instance.create_namespaced_event(namespace, k8s_event_body)
+        api_instance.create_namespaced_event(namespace, k8s_event_body)
 
     except ApiException as exception:
 

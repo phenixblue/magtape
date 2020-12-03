@@ -74,6 +74,10 @@ This release brings some new features, CI enhancements, changes to test mocking,
 - Update docker/build-push-action to v2 (#62 authored by @ilrudie)
 - Update functional testing documentation (#65 authored by @ilrudie)
 - Enable server-side warnings on policy failures ()
+- Add logic to handle in-cluster and out-of-cluster kubernetes client configs for API calls ()
+- Add RBAC rules to read secrets for user defined Slack Incoming Webhook URL's ()
+- Log MagTape version on startup ()
+
 
 **server-side warnings on policy failures**
 
