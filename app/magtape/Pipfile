@@ -12,6 +12,11 @@ prometheus-client = "*"
 prometheus-flask-exporter = "*"
 gunicorn = "*"
 werkzeug = "*"
+opentelemetry-sdk = "*"
+opentelemetry-instrumentation = "*"
+opentelemetry-instrumentation-flask = "*"
+opentelemetry-instrumentation-requests = "*"
+opentelemetry-exporter-zipkin = "*"
 
 [requires]
 python_version = "3.8"
