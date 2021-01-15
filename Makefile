@@ -45,7 +45,8 @@ ci-bootstrap:
 	echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
 	# Download and install kubectl
 	curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
-
+	kubectl version --client
+	
 ###############################################################################
 # K8s Related Targets #########################################################
 ###############################################################################
