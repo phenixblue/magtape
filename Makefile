@@ -29,6 +29,21 @@ WEBHOOK_NAMESPACE ?= "magtape-system"
 TEST_NAMESPACE ?= "test1"
 DOCKER := docker
 
+# Pin utilities at specific versions for CI stability
+KUBECTL_VERSION ?= 1.19.1
+
+###############################################################################
+# CI Bootstrap Related Targets ################################################
+###############################################################################
+
+# Download and install required utilities
+.PHONY: ci-bootstrap
+ci-bootstrap:
+
+	# Download and install kubectl
+	curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
+
+
 ###############################################################################
 # K8s Related Targets #########################################################
 ###############################################################################
