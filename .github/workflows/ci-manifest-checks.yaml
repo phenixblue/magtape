@@ -33,7 +33,7 @@ jobs:
       timeout-minutes: 5
       run: |
         mkdir -p "${GITHUB_WORKSPACE}/bin"
-        make ci-bootstrap
+        curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
         echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
         echo "${PATH}"
         pwd
