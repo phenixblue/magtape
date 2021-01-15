@@ -41,11 +41,8 @@ KUBECTL_VERSION ?= 1.19.1
 ci-bootstrap:
 	# Create local bin directory
 	mkdir -p "${GITHUB_WORKSPACE}/bin"
-	# Add local bin dir to PATH
-	echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
 	# Download and install kubectl
 	curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
-	kubectl version --client
 	
 ###############################################################################
 # K8s Related Targets #########################################################
