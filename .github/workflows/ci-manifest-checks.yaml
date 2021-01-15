@@ -32,6 +32,7 @@ jobs:
     - name: Check for manifest changes
       timeout-minutes: 5
       run: |
-        make ci-bootstrap
+        mkdir -p "${GITHUB_WORKSPACE}/bin"
         echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
+        make ci-bootstrap
         make compare-single-manifest
