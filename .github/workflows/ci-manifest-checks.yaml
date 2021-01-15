@@ -38,4 +38,5 @@ jobs:
         echo "${PATH}"
         pwd
         ls -la "${GITHUB_WORKSPACE}/bin"
+        ${GITHUB_WORKSPACE}/bin/kubectl version --client
         make compare-single-manifest
