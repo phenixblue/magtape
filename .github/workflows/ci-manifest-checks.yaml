@@ -36,5 +36,6 @@ jobs:
         make ci-bootstrap
         echo "${GITHUB_WORKSPACE}/bin" >> $GITHUB_PATH
         echo "${PATH}"
+        pwd
         ls -la "${GITHUB_WORKSPACE}/bin"
         make compare-single-manifest
