@@ -32,11 +32,7 @@ jobs:
     - name: Check for manifest changes
       timeout-minutes: 5
       run: |
-        mkdir -p $GITHUB_WORKSPACE/bin
-        echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
-        curl -L https://storage.googleapis.com/kubernetes-release/release/1.19.1/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
+        make ci-bootstrap
         echo "${PATH}"
-        pwd
-        ls -la "${GITHUB_WORKSPACE}/bin"
         ${GITHUB_WORKSPACE}/bin/kubectl version --client
         make compare-single-manifest
