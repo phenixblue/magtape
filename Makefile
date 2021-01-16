@@ -42,7 +42,7 @@ ci-bootstrap:
 
 	mkdir -p "${GITHUB_WORKSPACE}/bin"
 	# Download and install kubectl
-	curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl
+	curl -L https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o ${GITHUB_WORKSPACE}/bin/kubectl && chmod +x ${GITHUB_WORKSPACE}/bin/kubectl && mv "${GITHUB_WORKSPACE}/bin/kubectl" /usr/local/bin/
 	kubectl version --client
 	
 ###############################################################################
